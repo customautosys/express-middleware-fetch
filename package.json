@@ -1,0 +1,32 @@
+{
+	"name": "express-middleware-fetch",
+	"version": "1.0.0",
+	"description": "Fetch routes from other express middlewares",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc"
+	},
+	"files": [
+		"/dist"
+	],
+	"author": "Wilson Foo Yu Kang <wilson.foo@customautosys.com>",
+	"license": "NPOSL-3.0",
+	"repository": "git+https://github.com/customautosys/express-middleware-fetch.git",
+	"bugs": {
+		"url": "https://github.com/customautosys/express-middleware-fetch/issues"
+	},
+	"homepage": "https://github.com/customautosys/express-middleware-fetch#readme",
+	"keywords": [
+		"express",
+		"middleware",
+		"fetch",
+		"express-middleware-fetch"
+	],
+	"packageManager": "yarn@4.1.1",
+	"devDependencies": {
+		"@types/express": "^4.17.21",
+		"@types/node": "^20.12.7",
+		"typescript": "^5.4.5"
+	}
+}
