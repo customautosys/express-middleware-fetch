@@ -7,7 +7,7 @@ This creates a fetch function, partially compatible with browser fetch, which ca
 ## Available function
 
 ```typescript
-expressMiddlewareFetch(req?:express.Request):((url:string|URL,requestInit?:RequestInit)=>Promise<Response>)&{req:express.Request}
+expressMiddlewareFetch(req:express.Request):((url:string|URL,requestInit?:RequestInit)=>Promise<Response>)&{req:express.Request}
 ```
 
 Call this function with an express.Request object to create a fetch function for the same express server as that express.Request object.
