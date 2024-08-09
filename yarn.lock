@@ -132,7 +132,7 @@ __metadata:
     "@types/node": "npm:^20.12.7"
     "@types/readable-stream": "npm:^4.0.15"
     jsan: "npm:^3.1.14"
-    readable-stream: "npm:vite-compatible-readable-stream@^3.6.1"
+    readable-stream: "npm:readable-stream-no-circular@^3.6.0"
     typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
@@ -151,14 +151,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:vite-compatible-readable-stream@^3.6.1":
-  version: 3.6.1
-  resolution: "vite-compatible-readable-stream@npm:3.6.1"
+"readable-stream@npm:readable-stream-no-circular@^3.6.0":
+  version: 3.6.0
+  resolution: "readable-stream-no-circular@npm:3.6.0"
   dependencies:
     inherits: "npm:^2.0.3"
     string_decoder: "npm:^1.1.1"
     util-deprecate: "npm:^1.0.1"
-  checksum: 10/ed374bdae0a765a8de902057a5127ab34a908f758f5b31ffa845b76648ba6ecf6743f9559b6c3392035d69a7b20db385a6c521e58b54a7ddfb7f632d33026925
+  checksum: 10/1aad48fd636ecc587d25ab62535d873835555868fb998aa0566aa8bf442729f09b6ffd0ff2188dd1e93409fdc59a7fbcf03adefc667ccab377d8bfc9a7f9df52
   languageName: node
   linkType: hard
 
