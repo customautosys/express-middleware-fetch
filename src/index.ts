@@ -1,4 +1,6 @@
 import type * as express from 'express';
+import {Readable} from 'readable-stream';
+import jsan from 'jsan';
 
 export function expressMiddlewareFetch(req:express.Request):{req:express.Request}&((url:string|URL,requestInit?:RequestInit)=>Promise<Response>){
 	return(function(req:express.Request){
@@ -13,7 +15,28 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 				resolve:(response:Response)=>void,
 				reject:(error:any)=>void
 			){
-				let req=Object.assign({},this.req);
+				if(this.requestInit.headers){
+					for(let i in this.requestInit.headers){
+						let lowercase=i.toLowerCase();
+						if(lowercase!==i)this.requestInit.headers[lowercase]=this.requestInit.headers[i];
+					}
+				}
+				if(typeof requestInit.body==='string'&&requestInit.body&&String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'){
+					let body:any;
+					try{
+						body=jsan.parse(requestInit.body);
+					}catch(error){}
+					if(typeof body==='object'&&body)requestInit.body=body;
+				}
+				let req:any;
+				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'){
+					delete this.requestInit.headers['content-type'];
+					req=Object.assign({},this.req);
+				}else{
+					let stream=new Readable();
+					stream.push(requestInit.body);
+					req=Object.assign(stream,this.req);
+				}
 				let params:any={
 					ip:'127.0.0.1',
 					method:this.requestInit?.method||'get',
@@ -27,7 +50,7 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 					},
 					connection:{}
 				};
-				if(this.requestInit?.headers){
+				if(this.requestInit.headers){
 					if(Array.isArray(this.requestInit.headers))this.requestInit.headers.forEach(header=>params.headers[header[0]]=header[1]);
 					else if((this.requestInit.headers as Headers).get)(this.requestInit.headers as Headers).forEach((value,key)=>params.headers[key]=value);
 					else Object.assign(params.headers,this.requestInit.headers);

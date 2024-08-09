@@ -8,16 +8,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.expressMiddlewareFetch = void 0;
+const readable_stream_1 = require("readable-stream");
+const jsan_1 = __importDefault(require("jsan"));
 function expressMiddlewareFetch(req) {
     return (function (req) {
         let fetcher = Object.assign(function (url, requestInit) {
             if (url instanceof URL)
                 url = url.toString();
             return new Promise(function (resolve, reject) {
-                var _a, _b, _c;
-                let req = Object.assign({}, this.req);
+                var _a, _b;
+                if (this.requestInit.headers) {
+                    for (let i in this.requestInit.headers) {
+                        let lowercase = i.toLowerCase();
+                        if (lowercase !== i)
+                            this.requestInit.headers[lowercase] = this.requestInit.headers[i];
+                    }
+                }
+                if (typeof requestInit.body === 'string' && requestInit.body && String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json') {
+                    let body;
+                    try {
+                        body = jsan_1.default.parse(requestInit.body);
+                    }
+                    catch (error) { }
+                    if (typeof body === 'object' && body)
+                        requestInit.body = body;
+                }
+                let req;
+                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json') {
+                    delete this.requestInit.headers['content-type'];
+                    req = Object.assign({}, this.req);
+                }
+                else {
+                    let stream = new readable_stream_1.Readable();
+                    stream.push(requestInit.body);
+                    req = Object.assign(stream, this.req);
+                }
                 let params = {
                     ip: '127.0.0.1',
                     method: ((_a = this.requestInit) === null || _a === void 0 ? void 0 : _a.method) || 'get',
@@ -31,7 +61,7 @@ function expressMiddlewareFetch(req) {
                     },
                     connection: {}
                 };
-                if ((_c = this.requestInit) === null || _c === void 0 ? void 0 : _c.headers) {
+                if (this.requestInit.headers) {
                     if (Array.isArray(this.requestInit.headers))
                         this.requestInit.headers.forEach(header => params.headers[header[0]] = header[1]);
                     else if (this.requestInit.headers.get)
