@@ -1,6 +1,7 @@
 import type * as express from 'express';
 import {Readable} from 'readable-stream';
 import jsan from 'jsan';
+import qs from 'qs';
 
 export function expressMiddlewareFetch(req:express.Request):{req:express.Request}&((url:string|URL,requestInit?:RequestInit)=>Promise<Response>){
 	return(function(req:express.Request){
@@ -29,14 +30,14 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 					if(typeof body==='object'&&body)requestInit.body=body;
 				}
 				let req:any;
-				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'){
-					delete this.requestInit.headers['content-type'];
-					req=Object.assign({},this.req);
-				}else{
+				let body:any=requestInit.body;
+				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'&&typeof requestInit.body==='object'){
+					body=jsan.stringify(requestInit.body);
+				}/*else{*/
 					let stream=new Readable();
-					stream.push(requestInit.body);
+					if(body)stream.push(body);
 					req=Object.assign(stream,this.req);
-				}
+				/*}*/
 				let params:any={
 					ip:'127.0.0.1',
 					method:this.requestInit?.method||'get',
@@ -50,6 +51,10 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 					},
 					connection:{}
 				};
+				let queryIndex=url.indexOf('?');
+				if(queryIndex>-1){
+					params.query=qs.parse(url.substring(url.indexOf('?')+1));
+				}
 				if(this.requestInit.headers){
 					if(Array.isArray(this.requestInit.headers))this.requestInit.headers.forEach(header=>params.headers[header[0]]=header[1]);
 					else if((this.requestInit.headers as Headers).get)(this.requestInit.headers as Headers).forEach((value,key)=>params.headers[key]=value);

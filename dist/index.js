@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.expressMiddlewareFetch = void 0;
 const readable_stream_1 = require("readable-stream");
 const jsan_1 = __importDefault(require("jsan"));
+const qs_1 = __importDefault(require("qs"));
 function expressMiddlewareFetch(req) {
     return (function (req) {
         let fetcher = Object.assign(function (url, requestInit) {
@@ -39,15 +40,15 @@ function expressMiddlewareFetch(req) {
                         requestInit.body = body;
                 }
                 let req;
-                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json') {
-                    delete this.requestInit.headers['content-type'];
-                    req = Object.assign({}, this.req);
-                }
-                else {
-                    let stream = new readable_stream_1.Readable();
-                    stream.push(requestInit.body);
-                    req = Object.assign(stream, this.req);
-                }
+                let body = requestInit.body;
+                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json' && typeof requestInit.body === 'object') {
+                    body = jsan_1.default.stringify(requestInit.body);
+                } /*else{*/
+                let stream = new readable_stream_1.Readable();
+                if (body)
+                    stream.push(body);
+                req = Object.assign(stream, this.req);
+                /*}*/
                 let params = {
                     ip: '127.0.0.1',
                     method: ((_a = this.requestInit) === null || _a === void 0 ? void 0 : _a.method) || 'get',
@@ -61,6 +62,10 @@ function expressMiddlewareFetch(req) {
                     },
                     connection: {}
                 };
+                let queryIndex = url.indexOf('?');
+                if (queryIndex > -1) {
+                    params.query = qs_1.default.parse(url.substring(url.indexOf('?') + 1));
+                }
                 if (this.requestInit.headers) {
                     if (Array.isArray(this.requestInit.headers))
                         this.requestInit.headers.forEach(header => params.headers[header[0]] = header[1]);
