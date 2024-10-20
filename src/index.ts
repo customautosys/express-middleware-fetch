@@ -21,18 +21,20 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 						let lowercase=i.toLowerCase();
 						if(lowercase!==i)this.requestInit.headers[lowercase]=this.requestInit.headers[i];
 					}
+				}else{
+					this.requestInit.headers={};
 				}
-				if(typeof requestInit.body==='string'&&requestInit.body&&String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'){
+				if(typeof this.requestInit.body==='string'&&this.requestInit.body&&String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'){
 					let body:any;
 					try{
-						body=jsan.parse(requestInit.body);
+						body=jsan.parse(this.requestInit.body);
 					}catch(error){}
-					if(typeof body==='object'&&body)requestInit.body=body;
+					if(typeof body==='object'&&body)this.requestInit.body=body;
 				}
 				let req:any;
-				let body:any=requestInit.body;
-				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'&&typeof requestInit.body==='object'){
-					body=jsan.stringify(requestInit.body);
+				let body:any=this.requestInit.body;
+				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'&&typeof this.requestInit.body==='object'){
+					body=jsan.stringify(this.requestInit.body);
 				}/*else{*/
 					let stream=new Readable();
 					if(body)stream.push(body);
@@ -140,7 +142,7 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 			}.bind({
 				req:fetcher.req,
 				url,
-				requestInit
+				requestInit:requestInit||{}
 			}));
 		},{req});
 		return fetcher;

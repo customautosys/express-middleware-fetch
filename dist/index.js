@@ -30,19 +30,22 @@ function expressMiddlewareFetch(req) {
                             this.requestInit.headers[lowercase] = this.requestInit.headers[i];
                     }
                 }
-                if (typeof requestInit.body === 'string' && requestInit.body && String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json') {
+                else {
+                    this.requestInit.headers = {};
+                }
+                if (typeof this.requestInit.body === 'string' && this.requestInit.body && String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json') {
                     let body;
                     try {
-                        body = jsan_1.default.parse(requestInit.body);
+                        body = jsan_1.default.parse(this.requestInit.body);
                     }
                     catch (error) { }
                     if (typeof body === 'object' && body)
-                        requestInit.body = body;
+                        this.requestInit.body = body;
                 }
                 let req;
-                let body = requestInit.body;
-                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json' && typeof requestInit.body === 'object') {
-                    body = jsan_1.default.stringify(requestInit.body);
+                let body = this.requestInit.body;
+                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json' && typeof this.requestInit.body === 'object') {
+                    body = jsan_1.default.stringify(this.requestInit.body);
                 } /*else{*/
                 let stream = new readable_stream_1.Readable();
                 if (body)
@@ -162,7 +165,7 @@ function expressMiddlewareFetch(req) {
             }.bind({
                 req: fetcher.req,
                 url,
-                requestInit
+                requestInit: requestInit || {}
             }));
         }, { req });
         return fetcher;
