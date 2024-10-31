@@ -44,14 +44,15 @@ function expressMiddlewareFetch(req) {
                 }
                 let req;
                 let body = this.requestInit.body;
-                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json' && typeof this.requestInit.body === 'object') {
-                    body = jsan_1.default.stringify(this.requestInit.body);
-                } /*else{*/
-                let stream = new readable_stream_1.Readable();
-                if (body)
-                    stream.push(body);
-                req = Object.assign(stream, this.req);
-                /*}*/
+                if (String(this.requestInit.headers['content-type']).toLowerCase() === 'application/json') {
+                    delete this.requestInit.headers['content-type'];
+                    req = Object.assign({}, this.req);
+                }
+                else {
+                    let stream = new readable_stream_1.Readable();
+                    stream.push(requestInit.body);
+                    req = Object.assign(stream, this.req);
+                }
                 let params = {
                     ip: '127.0.0.1',
                     method: ((_a = this.requestInit) === null || _a === void 0 ? void 0 : _a.method) || 'get',

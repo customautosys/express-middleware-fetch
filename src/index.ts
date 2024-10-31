@@ -33,13 +33,14 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 				}
 				let req:any;
 				let body:any=this.requestInit.body;
-				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'&&typeof this.requestInit.body==='object'){
-					body=jsan.stringify(this.requestInit.body);
-				}/*else{*/
+				if(String(this.requestInit.headers['content-type']).toLowerCase()==='application/json'){
+					delete this.requestInit.headers['content-type'];
+					req=Object.assign({},this.req);
+				}else{
 					let stream=new Readable();
-					if(body)stream.push(body);
+					stream.push(requestInit.body);
 					req=Object.assign(stream,this.req);
-				/*}*/
+				}
 				let params:any={
 					ip:'127.0.0.1',
 					method:this.requestInit?.method||'get',
