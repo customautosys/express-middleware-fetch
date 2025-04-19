@@ -7,7 +7,7 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 	return(function(req:express.Request){
 		let fetcher=Object.assign(function(url:string|URL,requestInit?:RequestInit){
 			if(url instanceof URL)url=url.toString();
-			return new Promise<Response>(function(
+			return new Promise<Response>(async function(
 				this:{
 					req:express.Request,
 					path:string,
@@ -38,7 +38,17 @@ export function expressMiddlewareFetch(req:express.Request):{req:express.Request
 					req=Object.assign({},this.req);
 				}else{
 					let stream=new Readable();
-					stream.push(requestInit.body);
+					if(body instanceof FormData){
+						try{
+							body=await new Response(body).text();
+							let boundary=body.substring(body.indexOf('--')+'--'.length,body.indexOf('\n'));
+							this.requestInit.headers['content-type']='multipart/form-data;boundary='+boundary;
+						}catch(error){
+							console.log(error);
+							body=null;
+						}
+					}
+					if(body)stream.push(body);
 					req=Object.assign(stream,this.req);
 				}
 				let params:any={
